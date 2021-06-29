@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from api import *
 import _thread as thread
+import paho.mqtt.client as mqtt
 
 #As funções abaixo são responsáveis por transitar entre as telas, sendo acionadas pelos
 #botões "Voltar" e "Avançar"
@@ -277,6 +278,35 @@ b50.grid(row = 11, column = 0)
 
 b61 = Button(frame63, text = 'Cadastrar', width = 12, font = 'verdana 10 bold', command = races)
 b61.grid(row = 11, column = 1)
+
+def start():
+    config = a.getRaceSettings()
+    file = open('dataBase/pilots.json', 'r')
+    linhas = file.readlines()
+    for linha in linhas:
+        b = json.loads(linha)
+        if(config['piloto1'] in b['nome']):
+            config['epc1'] = b['carro']
+        elif(config['piloto2'] in b['nome']):
+            config['epc2'] = b['carro']
+        elif(config['piloto3'] in b['nome']):
+            config['epc3'] = b['carro']
+        elif(config['piloto4'] in b['nome']):
+            config['epc4'] = b['carro']
+    file.close()
+    linhas.clear()
+    mqttBroker = 'broker.emqx.io'
+    port = 1883
+    client = mqtt.Client("ADM")
+    client.connect(mqttBroker, port)
+    client.publish('Settings', config['epc1']+'/'+config['epc2']+'/'+config['epc3']+'/'+config['epc4']+'/'+\
+        config['voltas']+'/'+config['duracao'])
+    
+
+b61 = Button(frame63, text = 'Começar', width = 12, font = 'verdana 10 bold', command = start)
+b61.grid(row = 11, column = 2)
+
+
 
 frame61.pack(pady = 10)
 frame62.pack(pady = 8)

@@ -143,7 +143,7 @@ class api():
     def getRaceSettings(self):
         file = open('dataBase/race.json', 'r')
         linhas = file.readlines()
-        settings = {'ducarao':'', 'voltas':'', 'piloto1':'', 'piloto2':''}
+        settings = {}
         for linha in linhas:
             b = json.loads(linha)
             settings['pista'] = b['pista']

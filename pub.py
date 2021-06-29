@@ -8,8 +8,10 @@ import _thread as thread
 #port = 1883
 mqttBroker = 'broker.emqx.io'
 port = 1883
-client = mqtt.Client()
+client = mqtt.Client("Pub")
 client.connect(mqttBroker, port)
+settings=''
+run = True
 #Configuração da corrida
 
 tags = ['carro1', 'carro2', 'carro3', 'carro4']
@@ -20,7 +22,6 @@ r = True
 def addBuffer(carro, tempo, volta):
     tagBuffer.append({'tag':carro, 'time': tempo, 'sent':'false', 'volta':volta})
     raceTags.append(carro)
-    print(tagBuffer)
 
 def readerThread(tempo):
     print('entrei na thread')
@@ -51,6 +52,21 @@ def readerThread(tempo):
     print('Thread encerrada')
     return
 
+def on_message(client, userdata, message):
+    global settings
+    settings = str(message.payload.decode('utf-8'))
+    print(settings)
+
+def get_settings():
+    global run
+    global settings    
+    client.loop_start()
+    client.subscribe('Settings')
+    client.on_message = on_message
+    time.sleep(10)
+    client.loop_stop()
+        
+
 def readerQualify():
     print('Começando qualify')    
     a = datetime.fromtimestamp(time.time())
@@ -79,7 +95,6 @@ def readerQualify():
             if(time1 > time2):
                 del(tagBuffer[0])
                 del(raceTags[0])
-                print('Deletado')
         time3 = datetime.fromtimestamp(time.time()) - a
         time4 = timedelta(seconds = 21)
         if(time3>time4):
@@ -88,14 +103,5 @@ def readerQualify():
     tags.clear()
     print('terminando a qualify')
 
+get_settings()
 readerQualify()
-'''
-while True:
-    randNumber = 10
-    randNumber2 = randNumber + 10
-    client.publish('Temperatura/Sala', randNumber)
-    client.publish('Temperatura/Quarto', randNumber2)
-    print('Publicou: ' + str(randNumber) + ' no tópico TEMPERATURE')
-    print('Publicou: ' + str(randNumber2) + ' no tópico TEMPERATURE')
-    time.sleep(6)
-'''
