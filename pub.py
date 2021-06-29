@@ -14,7 +14,7 @@ settings=''
 run = True
 #Configuração da corrida
 
-tags = ['carro1', 'carro2', 'carro3', 'carro4']
+tags = []
 raceTags = []
 tagBuffer = []
 r = True
@@ -54,8 +54,12 @@ def readerThread(tempo):
 
 def on_message(client, userdata, message):
     global settings
-    settings = str(message.payload.decode('utf-8'))
-    print(settings)
+    settings = str(message.payload.decode('utf-8')).split('/')
+    tags.append(settings[0])
+    tags.append(settings[1])
+    tags.append(settings[2])
+    tags.append(settings[3])
+    
 
 def get_settings():
     global run
@@ -68,6 +72,7 @@ def get_settings():
         
 
 def readerQualify():
+    global settings
     print('Começando qualify')    
     a = datetime.fromtimestamp(time.time())
     thread.start_new_thread(readerThread, (21,))
@@ -96,7 +101,7 @@ def readerQualify():
                 del(tagBuffer[0])
                 del(raceTags[0])
         time3 = datetime.fromtimestamp(time.time()) - a
-        time4 = timedelta(seconds = 21)
+        time4 = timedelta(seconds = int(settings[5]))
         if(time3>time4):
             break
 
