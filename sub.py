@@ -5,21 +5,37 @@ from tkinter import *
 from tkinter import ttk
 import _thread as thread
 
-piloto1 = {'tag':'carro1', 'record':300, 'time':0, 'position':'_', 'anterior':0, 'atual':0, 'volta':'_'}
-piloto2 = {'tag':'carro2', 'record':300, 'time':0, 'position':'_' , 'anterior':0, 'atual':0, 'volta':'_'}
-piloto3 = {'tag':'carro3', 'record':300, 'time':0, 'position':'_' , 'anterior':0, 'atual':0, 'volta':'_'}
-piloto4 = {'tag':'carro4', 'record':300, 'time':0, 'position':'_' , 'anterior':0, 'atual':0, 'volta':'_'}
+piloto1 = {'tag':'', 'nome':'', 'record':300, 'time':0, 'position':'_', 'anterior':0, 'atual':0, 'volta':'_'}
+piloto2 = {'tag':'', 'nome':'', 'record':300, 'time':0, 'position':'_', 'anterior':0, 'atual':0, 'volta':'_'}
+piloto3 = {'tag':'', 'nome':'', 'record':300, 'time':0, 'position':'_', 'anterior':0, 'atual':0, 'volta':'_'}
+piloto4 = {'tag':'', 'nome':'', 'record':300, 'time':0, 'position':'_', 'anterior':0, 'atual':0, 'volta':'_'}
 run = True
 check_sub_car1 = True
 check_sub_car2 = True
 check_sub_car3 = True
 check_sub_car4 = True
+config = []
 
 def on_message(client, userdata, message):
+    global config
     msg = str(message.payload.decode('utf-8')).split('/')
     qualifyCars = [piloto1, piloto2, piloto3, piloto4]
-    if(msg[0]=='carro1'):
+    if(msg[-1]=='set' and len(config)==0):
+        piloto1['tag'] = msg[0]        
+        piloto2['tag'] = msg[1]        
+        piloto3['tag'] = msg[2]        
+        piloto4['tag'] = msg[3]        
+        piloto1['nome'] = msg[6]
+        piloto2['nome'] = msg[7]
+        piloto3['nome'] = msg[8]
+        piloto4['nome'] = msg[9]
+        config.append(msg[4])
+        config.append(msg[5])
+        label_settings.configure(text='Configs obtidas')
+        print(config)
+    elif(msg[0]==piloto1['tag'] and msg[-1]!='set'):
         if(msg[2]=='0'):
+            label_nome2_car1.configure(text=piloto1['nome'])
             piloto1['anterior'] = datetime.strptime(msg[1], '%Y-%m-%d %H:%M:%S.%f')
         else:
             piloto1['atual'] = datetime.strptime(msg[1], '%Y-%m-%d %H:%M:%S.%f')
@@ -38,8 +54,9 @@ def on_message(client, userdata, message):
             label_pos2_car1.configure(text=piloto1['position'])
             label_volta2_car1.configure(text=piloto1['volta'])
             print(piloto1['tag'], piloto1['position'], piloto1['time'], piloto1['record'], piloto1['volta'])
-    if(msg[0]=='carro2'):
+    elif(msg[0]==piloto2['tag']):
         if(msg[2]=='0'):
+            label_nome2_car2.configure(text=piloto2['nome'])
             piloto2['anterior'] = datetime.strptime(msg[1], '%Y-%m-%d %H:%M:%S.%f')
         else:
             piloto2['atual'] = datetime.strptime(msg[1], '%Y-%m-%d %H:%M:%S.%f')
@@ -58,8 +75,9 @@ def on_message(client, userdata, message):
             label_pos2_car2.configure(text=piloto2['position'])
             label_volta2_car2.configure(text=piloto2['volta'])
             print(piloto2['tag'], piloto2['position'], piloto2['time'], piloto2['record'], piloto2['volta'])
-    if(msg[0]=='carro3'):
+    elif(msg[0]==piloto3['tag']):
         if(msg[2]=='0'):
+            label_nome2_car3.configure(text=piloto3['nome'])
             piloto3['anterior']=datetime.strptime(msg[1], '%Y-%m-%d %H:%M:%S.%f')
         else:
             piloto3['atual'] = datetime.strptime(msg[1], '%Y-%m-%d %H:%M:%S.%f')
@@ -78,8 +96,9 @@ def on_message(client, userdata, message):
             label_pos2_car3.configure(text=piloto3['position'])
             label_volta2_car3.configure(text=piloto3['volta'])
             print(piloto3['tag'], piloto3['position'], piloto3['time'], piloto3['record'], piloto3['volta'])
-    if(msg[0]=='carro4'):
+    elif(msg[0]==piloto4['tag']):
         if(msg[2]=='0'):
+            label_nome2_car4.configure(text=piloto4['nome'])
             piloto4['anterior']=datetime.strptime(msg[1], '%Y-%m-%d %H:%M:%S.%f')
         else:
             piloto4['atual'] = datetime.strptime(msg[1], '%Y-%m-%d %H:%M:%S.%f')
@@ -100,17 +119,24 @@ def on_message(client, userdata, message):
             print(piloto4['tag'], piloto4['position'], piloto4['time'], piloto4['record'], piloto4['volta'])
 
 def qualify():
-    global run
-    mqttBroker = 'broker.emqx.io'
-    port = 1883
-    client = mqtt.Client("Sub")
-    client.connect(mqttBroker, port)
+    global run    
     while run:
         client.loop()
         client.subscribe('Corrida/#')
         client.on_message = on_message
         if(piloto1['volta']=='3' and piloto2['volta']=='3' and piloto3['volta']=='3' and piloto4['volta']=='3'):
             run = False
+
+def get_settings():
+    client.loop_start()
+    client.subscribe('Settings')
+    client.on_message = on_message
+    time.sleep(10)
+    client.loop_stop()
+    label_settings.configure(text='Tudo pronto!')
+
+def get_set():
+    thread.start_new_thread(get_settings, ())
 
 def quali():
     start_screen.forget()
@@ -127,6 +153,11 @@ s = Tk()
 s.title('Torcedor')
 s.geometry('680x570')
 
+mqttBroker = 'broker.emqx.io'
+port = 1883
+client = mqtt.Client("Sub")
+client.connect(mqttBroker, port)
+
 screen = Frame(s)
 start_screen = Frame(s)
 screen_car1 = Frame(screen)
@@ -136,10 +167,10 @@ screen_car4 = Frame(screen)
 screen_buttons = Frame(s)
 
 label_qualify = Label(screen, text='Qualificatória', font = 'verdana 16 bold')
-label_tag_car1 = Label(screen_car1, text='Tag:', font = 'verdana 11 bold')
-label_tag_car1.grid(row = 0, column = 0, padx = 25)
-label_Tag2_car1 = Label(screen_car1, text=piloto1['tag'], font = 'verdana 11')
-label_Tag2_car1.grid(row = 1, column = 0, padx = 25)
+label_nome_car1 = Label(screen_car1, text='Nome:', font = 'verdana 11 bold')
+label_nome_car1.grid(row = 0, column = 0, padx = 25)
+label_nome2_car1 = Label(screen_car1, text=piloto1['nome'], font = 'verdana 11')
+label_nome2_car1.grid(row = 1, column = 0, padx = 25)
 
 label_pos_car1 = Label(screen_car1, text='Pos:', font = 'verdana 11 bold')
 label_pos_car1.grid(row = 0, column = 1, padx = 25)
@@ -162,10 +193,10 @@ label_volta2_car1 = Label(screen_car1, text=piloto1['volta'], font = 'verdana 11
 label_volta2_car1.grid(row = 1, column = 4, padx = 25)
 
 
-label_tag_car2 = Label(screen_car2, text='Tag:', font = 'verdana 11 bold')
-label_tag_car2.grid(row = 0, column = 0, padx = 25)
-label_Tag2_car2 = Label(screen_car2, text=piloto2['tag'], font = 'verdana 11')
-label_Tag2_car2.grid(row = 1, column = 0, padx = 25)
+label_nome_car2 = Label(screen_car2, text='Nome:', font = 'verdana 11 bold')
+label_nome_car2.grid(row = 0, column = 0, padx = 25)
+label_nome2_car2 = Label(screen_car2, text=piloto2['nome'], font = 'verdana 11')
+label_nome2_car2.grid(row = 1, column = 0, padx = 25)
 
 label_pos_car2 = Label(screen_car2, text='Pos:', font = 'verdana 11 bold')
 label_pos_car2.grid(row = 0, column = 1, padx = 25)
@@ -188,10 +219,10 @@ label_volta2_car2 = Label(screen_car2, text=piloto2['volta'], font = 'verdana 11
 label_volta2_car2.grid(row = 1, column = 4, padx = 25)
 
 
-label_tag_car3 = Label(screen_car3, text='Tag:', font = 'verdana 11 bold')
-label_tag_car3.grid(row = 0, column = 0, padx = 25)
-label_Tag2_car3 = Label(screen_car3, text=piloto3['tag'], font = 'verdana 11')
-label_Tag2_car3.grid(row = 1, column = 0, padx = 25)
+label_nome_car3 = Label(screen_car3, text='Nome:', font = 'verdana 11 bold')
+label_nome_car3.grid(row = 0, column = 0, padx = 25)
+label_nome2_car3 = Label(screen_car3, text=piloto3['nome'], font = 'verdana 11')
+label_nome2_car3.grid(row = 1, column = 0, padx = 25)
 
 label_pos_car3 = Label(screen_car3, text='Pos:', font = 'verdana 11 bold')
 label_pos_car3.grid(row = 0, column = 1, padx = 25)
@@ -214,10 +245,10 @@ label_volta2_car3 = Label(screen_car3, text=piloto3['volta'], font = 'verdana 11
 label_volta2_car3.grid(row = 1, column = 4, padx = 25)
 
 
-label_tag_car4 = Label(screen_car4, text='Tag:', font = 'verdana 11 bold')
-label_tag_car4.grid(row = 0, column = 0, padx = 25)
-label_Tag2_car4 = Label(screen_car4, text=piloto4['tag'], font = 'verdana 11')
-label_Tag2_car4.grid(row = 1, column = 0, padx = 25)
+label_nome_car4 = Label(screen_car4, text='Nome:', font = 'verdana 11 bold')
+label_nome_car4.grid(row = 0, column = 0, padx = 25)
+label_nome2_car4 = Label(screen_car4, text=piloto4['nome'], font = 'verdana 11')
+label_nome2_car4.grid(row = 1, column = 0, padx = 25)
 
 label_pos_car4 = Label(screen_car4, text='Pos:', font = 'verdana 11 bold')
 label_pos_car4.grid(row = 0, column = 1, padx = 25)
@@ -286,6 +317,12 @@ button_car4.grid(row = 0, column = 4)
 
 button = Button(start_screen, text='Qualify', width = 12, font = 'verdana 10 bold', command=quali)
 button.pack()
+
+button2 = Button(start_screen, text='Settings', width = 12, font = 'verdana 10 bold', command=get_set)
+button2.pack()
+
+label_settings = Label(start_screen, text='', font = 'verdana 11')
+label_settings.pack(side=BOTTOM)
 
 start_screen.pack(expand=True)
 

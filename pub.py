@@ -59,6 +59,7 @@ def on_message(client, userdata, message):
     tags.append(settings[1])
     tags.append(settings[2])
     tags.append(settings[3])
+    print(settings)
     
 
 def get_settings():
@@ -67,7 +68,7 @@ def get_settings():
     client.loop_start()
     client.subscribe('Settings')
     client.on_message = on_message
-    time.sleep(10)
+    time.sleep(15)
     client.loop_stop()
         
 
@@ -75,7 +76,7 @@ def readerQualify():
     global settings
     print('Começando qualify')    
     a = datetime.fromtimestamp(time.time())
-    thread.start_new_thread(readerThread, (21,))
+    thread.start_new_thread(readerThread, (int(settings[5]),))
     while True: 
         
         if(len(tagBuffer)>0 and tagBuffer[0]['sent'] == 'false'):

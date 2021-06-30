@@ -300,7 +300,8 @@ def start():
     client = mqtt.Client("ADM")
     client.connect(mqttBroker, port)
     client.publish('Settings', config['epc1']+'/'+config['epc2']+'/'+config['epc3']+'/'+config['epc4']+'/'+\
-        config['voltas']+'/'+config['duracao'])
+        config['voltas']+'/'+config['duracao']+'/'+config['piloto1']+'/'+config['piloto2']+'/'+config['piloto3']+\
+        '/'+config['piloto4']+'/'+'set')
     
 
 b61 = Button(frame63, text = 'Começar', width = 12, font = 'verdana 10 bold', command = start)
