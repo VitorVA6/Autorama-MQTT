@@ -57,6 +57,8 @@ def on_message(client, userdata, message):
             label_pos2_car4.configure(text=piloto4['position'])
             label_volta2_car1.configure(text=piloto1['volta'])
             print(piloto1['tag'], piloto1['position'], piloto1['time'], piloto1['record'], piloto1['volta'])
+            client.publish('Qualify/Pil1', piloto1['nome']+'-'+piloto1['position']+'-'+str(piloto1['time'])+'-'+\
+                str(piloto1['record'])+'-'+piloto1['volta'])
     elif(msg[0]==piloto2['tag']):
         if(msg[2]=='0'):
             label_nome2_car2.configure(text=piloto2['nome'])
@@ -81,6 +83,8 @@ def on_message(client, userdata, message):
             label_pos2_car4.configure(text=piloto4['position'])
             label_volta2_car2.configure(text=piloto2['volta'])
             print(piloto2['tag'], piloto2['position'], piloto2['time'], piloto2['record'], piloto2['volta'])
+            client.publish('Qualify/Pil2', piloto2['nome']+'-'+piloto2['position']+'-'+str(piloto2['time'])+'-'+\
+                str(piloto2['record'])+'-'+piloto2['volta'])
     elif(msg[0]==piloto3['tag']):
         if(msg[2]=='0'):
             label_nome2_car3.configure(text=piloto3['nome'])
@@ -105,6 +109,8 @@ def on_message(client, userdata, message):
             label_pos2_car4.configure(text=piloto4['position'])
             label_volta2_car3.configure(text=piloto3['volta'])
             print(piloto3['tag'], piloto3['position'], piloto3['time'], piloto3['record'], piloto3['volta'])
+            client.publish('Qualify/Pil3', piloto3['nome']+'-'+piloto3['position']+'-'+str(piloto3['time'])+'-'+\
+                str(piloto3['record'])+'-'+piloto3['volta'])
     elif(msg[0]==piloto4['tag']):
         if(msg[2]=='0'):
             label_nome2_car4.configure(text=piloto4['nome'])
@@ -129,14 +135,15 @@ def on_message(client, userdata, message):
             label_pos2_car4.configure(text=piloto4['position'])
             label_volta2_car4.configure(text=piloto4['volta'])
             print(piloto4['tag'], piloto4['position'], piloto4['time'], piloto4['record'], piloto4['volta'])
+            client.publish('Qualify/Pil4', piloto4['nome']+'-'+piloto4['position']+'-'+str(piloto4['time'])+'-'+\
+                str(piloto4['record'])+'-'+piloto4['volta'])
 
 def qualify():
     client.loop_start()
     client.subscribe('Corrida/#')
     client.on_message = on_message
     time.sleep(int(config[1])+10)
-    client.loop_stop()
-        
+    client.loop_stop()        
 
 def get_settings():
     client.loop_start()
@@ -326,7 +333,7 @@ button_car3.grid(row = 0, column = 3)
 button_car4 = Button(screen_buttons, text='Piloto4', width = 12, font = 'verdana 10 bold', command=sub_car4)
 button_car4.grid(row = 0, column = 4)
 
-button = Button(start_screen, text='Qualify', width = 12, font = 'verdana 10 bold', command=quali)
+button = Button(start_screen, text='Start', width = 12, font = 'verdana 10 bold', command=quali)
 button.pack()
 
 button2 = Button(start_screen, text='Settings', width = 12, font = 'verdana 10 bold', command=get_set)

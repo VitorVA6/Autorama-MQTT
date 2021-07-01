@@ -110,4 +110,5 @@ def readerQualify():
     print('terminando a qualify')
 
 get_settings()
+a = input('Pressione pra iniciar:')
 readerQualify()
