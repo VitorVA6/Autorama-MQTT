@@ -52,6 +52,9 @@ def on_message(client, userdata, message):
             label_time2_car1.configure(text=piloto1['time'])
             label_record2_car1.configure(text=piloto1['record'])
             label_pos2_car1.configure(text=piloto1['position'])
+            label_pos2_car2.configure(text=piloto2['position'])
+            label_pos2_car3.configure(text=piloto3['position'])
+            label_pos2_car4.configure(text=piloto4['position'])
             label_volta2_car1.configure(text=piloto1['volta'])
             print(piloto1['tag'], piloto1['position'], piloto1['time'], piloto1['record'], piloto1['volta'])
     elif(msg[0]==piloto2['tag']):
@@ -72,7 +75,10 @@ def on_message(client, userdata, message):
             qualifyCars[3]['position']='4'
             label_time2_car2.configure(text=piloto2['time'])
             label_record2_car2.configure(text=piloto2['record'])
+            label_pos2_car1.configure(text=piloto1['position'])
             label_pos2_car2.configure(text=piloto2['position'])
+            label_pos2_car3.configure(text=piloto3['position'])
+            label_pos2_car4.configure(text=piloto4['position'])
             label_volta2_car2.configure(text=piloto2['volta'])
             print(piloto2['tag'], piloto2['position'], piloto2['time'], piloto2['record'], piloto2['volta'])
     elif(msg[0]==piloto3['tag']):
@@ -93,7 +99,10 @@ def on_message(client, userdata, message):
             qualifyCars[3]['position']='4'
             label_time2_car3.configure(text=piloto3['time'])
             label_record2_car3.configure(text=piloto3['record'])
+            label_pos2_car1.configure(text=piloto1['position'])
+            label_pos2_car2.configure(text=piloto2['position'])
             label_pos2_car3.configure(text=piloto3['position'])
+            label_pos2_car4.configure(text=piloto4['position'])
             label_volta2_car3.configure(text=piloto3['volta'])
             print(piloto3['tag'], piloto3['position'], piloto3['time'], piloto3['record'], piloto3['volta'])
     elif(msg[0]==piloto4['tag']):
@@ -114,18 +123,20 @@ def on_message(client, userdata, message):
             qualifyCars[3]['position']='4'
             label_time2_car4.configure(text=piloto4['time'])
             label_record2_car4.configure(text=piloto4['record'])
+            label_pos2_car1.configure(text=piloto1['position'])
+            label_pos2_car2.configure(text=piloto2['position'])
+            label_pos2_car3.configure(text=piloto3['position'])
             label_pos2_car4.configure(text=piloto4['position'])
             label_volta2_car4.configure(text=piloto4['volta'])
             print(piloto4['tag'], piloto4['position'], piloto4['time'], piloto4['record'], piloto4['volta'])
 
 def qualify():
-    global run    
-    while run:
-        client.loop()
-        client.subscribe('Corrida/#')
-        client.on_message = on_message
-        if(piloto1['volta']=='3' and piloto2['volta']=='3' and piloto3['volta']=='3' and piloto4['volta']=='3'):
-            run = False
+    client.loop_start()
+    client.subscribe('Corrida/#')
+    client.on_message = on_message
+    time.sleep(int(config[1])+10)
+    client.loop_stop()
+        
 
 def get_settings():
     client.loop_start()
@@ -306,13 +317,13 @@ def sub_car4():
         screen_car4.pack(pady=30)
         check_sub_car4 = True
 
-button_car1 = Button(screen_buttons, text=piloto1['tag'], width = 12, font = 'verdana 10 bold', command=sub_car1)
+button_car1 = Button(screen_buttons, text='Piloto1', width = 12, font = 'verdana 10 bold', command=sub_car1)
 button_car1.grid(row = 0, column = 1)
-button_car2 = Button(screen_buttons, text=piloto2['tag'], width = 12, font = 'verdana 10 bold', command=sub_car2)
+button_car2 = Button(screen_buttons, text='Piloto2', width = 12, font = 'verdana 10 bold', command=sub_car2)
 button_car2.grid(row = 0, column = 2)
-button_car3 = Button(screen_buttons, text=piloto3['tag'], width = 12, font = 'verdana 10 bold', command=sub_car3)
+button_car3 = Button(screen_buttons, text='Piloto3', width = 12, font = 'verdana 10 bold', command=sub_car3)
 button_car3.grid(row = 0, column = 3)
-button_car4 = Button(screen_buttons, text=piloto4['tag'], width = 12, font = 'verdana 10 bold', command=sub_car4)
+button_car4 = Button(screen_buttons, text='Piloto4', width = 12, font = 'verdana 10 bold', command=sub_car4)
 button_car4.grid(row = 0, column = 4)
 
 button = Button(start_screen, text='Qualify', width = 12, font = 'verdana 10 bold', command=quali)
