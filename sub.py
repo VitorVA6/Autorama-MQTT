@@ -57,7 +57,7 @@ def on_message(client, userdata, message):
             label_pos2_car4.configure(text=piloto4['position'])
             label_volta2_car1.configure(text=piloto1['volta'])
             print(piloto1['tag'], piloto1['position'], piloto1['time'], piloto1['record'], piloto1['volta'])
-            client.publish('Qualify/Pil1', piloto1['nome']+'-'+piloto1['position']+'-'+str(piloto1['time'])+'-'+\
+            client.publish('Qualify/Pil1','carro1'+'-'+ piloto1['nome']+'-'+piloto1['position']+'-'+str(piloto1['time'])+'-'+\
                 str(piloto1['record'])+'-'+piloto1['volta'])
     elif(msg[0]==piloto2['tag']):
         if(msg[2]=='0'):
@@ -83,7 +83,7 @@ def on_message(client, userdata, message):
             label_pos2_car4.configure(text=piloto4['position'])
             label_volta2_car2.configure(text=piloto2['volta'])
             print(piloto2['tag'], piloto2['position'], piloto2['time'], piloto2['record'], piloto2['volta'])
-            client.publish('Qualify/Pil2', piloto2['nome']+'-'+piloto2['position']+'-'+str(piloto2['time'])+'-'+\
+            client.publish('Qualify/Pil2', 'carro2'+'-'+piloto2['nome']+'-'+piloto2['position']+'-'+str(piloto2['time'])+'-'+\
                 str(piloto2['record'])+'-'+piloto2['volta'])
     elif(msg[0]==piloto3['tag']):
         if(msg[2]=='0'):
@@ -109,7 +109,7 @@ def on_message(client, userdata, message):
             label_pos2_car4.configure(text=piloto4['position'])
             label_volta2_car3.configure(text=piloto3['volta'])
             print(piloto3['tag'], piloto3['position'], piloto3['time'], piloto3['record'], piloto3['volta'])
-            client.publish('Qualify/Pil3', piloto3['nome']+'-'+piloto3['position']+'-'+str(piloto3['time'])+'-'+\
+            client.publish('Qualify/Pil3', 'carro3'+'-'+piloto3['nome']+'-'+piloto3['position']+'-'+str(piloto3['time'])+'-'+\
                 str(piloto3['record'])+'-'+piloto3['volta'])
     elif(msg[0]==piloto4['tag']):
         if(msg[2]=='0'):
@@ -135,7 +135,7 @@ def on_message(client, userdata, message):
             label_pos2_car4.configure(text=piloto4['position'])
             label_volta2_car4.configure(text=piloto4['volta'])
             print(piloto4['tag'], piloto4['position'], piloto4['time'], piloto4['record'], piloto4['volta'])
-            client.publish('Qualify/Pil4', piloto4['nome']+'-'+piloto4['position']+'-'+str(piloto4['time'])+'-'+\
+            client.publish('Qualify/Pil4', 'carro4'+'-'+piloto4['nome']+'-'+piloto4['position']+'-'+str(piloto4['time'])+'-'+\
                 str(piloto4['record'])+'-'+piloto4['volta'])
 
 def qualify():

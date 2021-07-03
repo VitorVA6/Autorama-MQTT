@@ -17,6 +17,30 @@ sub_car4 = False
 def on_message(client, userdata, message):
     dado = str(message.payload.decode('utf-8')).split('-')
     print(dado)    
+    if(dado[0]=='carro1'):
+        title_name_car1.configure(text=dado[1])
+        title_car_car1.configure(text=dado[2])
+        title_tempo_car1.configure(text=dado[3])
+        title_record_car1.configure(text=dado[4])
+        title_volta_car1.configure(text=dado[5])
+    elif(dado[0]=='carro2'):
+        title_name_car2.configure(text=dado[1])
+        title_car_car2.configure(text=dado[2])
+        title_tempo_car2.configure(text=dado[3])
+        title_record_car2.configure(text=dado[4])
+        title_volta_car2.configure(text=dado[5])
+    elif(dado[0]=='carro3'):
+        title_name_car3.configure(text=dado[1])
+        title_car_car3.configure(text=dado[2])
+        title_tempo_car3.configure(text=dado[3])
+        title_record_car3.configure(text=dado[4])
+        title_volta_car3.configure(text=dado[5])
+    elif(dado[0]=='carro4'):
+        title_name_car4.configure(text=dado[1])
+        title_car_car4.configure(text=dado[2])
+        title_tempo_car4.configure(text=dado[3])
+        title_record_car4.configure(text=dado[4])
+        title_volta_car4.configure(text=dado[5])
 
 def start_broker():
     client.loop_start()
@@ -28,40 +52,48 @@ def unsub_car1():
     global sub_car1
     if (sub_car1==False):
         client.subscribe('Qualify/Pil1')
+        title_status_car1.configure(text='ON')
         sub_car1=True
     else:
         client.unsubscribe('Qualify/Pil1')
+        title_status_car1.configure(text='OFF')
         sub_car1=False
 
 def unsub_car2():
     global sub_car2
     if (sub_car2==False):
         client.subscribe('Qualify/Pil2')
+        title_status_car2.configure(text='ON')
         sub_car2=True
     else:
         client.unsubscribe('Qualify/Pil2')
+        title_status_car2.configure(text='OFF')
         sub_car2=False
 
 def unsub_car3():
     global sub_car3
     if (sub_car3==False):
         client.subscribe('Qualify/Pil3')
+        title_status_car3.configure(text='ON')
         sub_car3=True
     else:
         client.unsubscribe('Qualify/Pil3')
+        title_status_car3.configure(text='OFF')
         sub_car3=False
 
 def unsub_car4():
     global sub_car4
     if (sub_car4==False):
         client.subscribe('Qualify/Pil4')
+        title_status_car4.configure(text='ON')
         sub_car4=True
     else:
         client.unsubscribe('Qualify/Pil4')
+        title_status_car4.configure(text='OFF')
         sub_car4=True
-'''
+
 thread.start_new_thread(start_broker, ())
-'''
+
 s = Tk()
 s.title('Torcedor')
 s.geometry('1240x730')
