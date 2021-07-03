@@ -137,6 +137,62 @@ def on_message(client, userdata, message):
             print(piloto4['tag'], piloto4['position'], piloto4['time'], piloto4['record'], piloto4['volta'])
             client.publish('Qualify/Pil4', 'carro4'+'-'+piloto4['nome']+'-'+piloto4['position']+'-'+str(piloto4['time'])+'-'+\
                 str(piloto4['record'])+'-'+piloto4['volta'])
+    elif(msg[0]=='race' and msg[1]==piloto1['tag']):
+        if(msg[3]=='0'):
+            label_nome2_car1.configure(text=piloto1['nome'])
+            piloto1['anterior']=datetime.strptime(msg[2], '%Y-%m-%d %H:%M:%S.%f')
+        else:
+            piloto1['atual'] = datetime.strptime(msg[2], '%Y-%m-%d %H:%M:%S.%f')
+            piloto1['time'] = float(str(piloto1['atual'] - piloto1['anterior'])[5:])
+            piloto1['anterior'] = piloto1['atual']
+            piloto1['volta']=msg[3]
+            label_time2_car1.configure(text=piloto1['time'])
+            label_volta2_car1.configure(text=piloto1['volta'])
+            print(piloto1['tag'], piloto1['position'], piloto1['time'], piloto1['volta'])
+            client.publish('Qualify/Pil1', 'carro1'+'-'+piloto1['nome']+'-'+piloto1['position']+'-'+str(piloto1['time'])+'-'+\
+                piloto1['volta'])
+    elif(msg[0]=='race' and msg[1]==piloto2['tag']):
+        if(msg[3]=='0'):
+            label_nome2_car2.configure(text=piloto2['nome'])
+            piloto2['anterior']=datetime.strptime(msg[2], '%Y-%m-%d %H:%M:%S.%f')
+        else:
+            piloto2['atual'] = datetime.strptime(msg[2], '%Y-%m-%d %H:%M:%S.%f')
+            piloto2['time'] = float(str(piloto2['atual'] - piloto2['anterior'])[5:])
+            piloto2['anterior'] = piloto2['atual']
+            piloto2['volta']=msg[3]
+            label_time2_car2.configure(text=piloto2['time'])            
+            label_volta2_car2.configure(text=piloto2['volta'])
+            print(piloto2['tag'], piloto2['position'], piloto2['time'], piloto2['volta'])
+            client.publish('Qualify/Pil2', 'carro2'+'-'+piloto2['nome']+'-'+piloto2['position']+'-'+str(piloto2['time'])+'-'+\
+                piloto2['volta'])
+    elif(msg[0]=='race' and msg[1]==piloto3['tag']):
+        if(msg[3]=='0'):
+            label_nome2_car3.configure(text=piloto3['nome'])
+            piloto3['anterior']=datetime.strptime(msg[2], '%Y-%m-%d %H:%M:%S.%f')
+        else:
+            piloto3['atual'] = datetime.strptime(msg[2], '%Y-%m-%d %H:%M:%S.%f')
+            piloto3['time'] = float(str(piloto3['atual'] - piloto3['anterior'])[5:])
+            piloto3['anterior'] = piloto3['atual']
+            piloto3['volta']=msg[3]         
+            label_time2_car3.configure(text=piloto3['time'])
+            label_volta2_car3.configure(text=piloto3['volta'])
+            print(piloto3['tag'], piloto3['position'], piloto3['time'], piloto3['volta'])
+            client.publish('Qualify/Pil3', 'carro3'+'-'+piloto3['nome']+'-'+piloto3['position']+'-'+str(piloto3['time'])+'-'+\
+                piloto3['volta'])
+    elif(msg[0]=='race' and msg[1]==piloto4['tag']):
+        if(msg[3]=='0'):
+            label_nome2_car4.configure(text=piloto4['nome'])
+            piloto4['anterior']=datetime.strptime(msg[2], '%Y-%m-%d %H:%M:%S.%f')
+        else:
+            piloto4['atual'] = datetime.strptime(msg[2], '%Y-%m-%d %H:%M:%S.%f')
+            piloto4['time'] = float(str(piloto4['atual'] - piloto4['anterior'])[5:])
+            piloto4['anterior'] = piloto4['atual']
+            piloto4['volta']=msg[3]
+            label_time2_car4.configure(text=piloto4['time'])            
+            label_volta2_car4.configure(text=piloto4['volta'])
+            print(piloto4['tag'], piloto4['position'], piloto4['time'], piloto4['volta'])
+            client.publish('Qualify/Pil4', 'carro4'+'-'+piloto4['nome']+'-'+piloto4['position']+'-'+str(piloto4['time'])+'-'+\
+                piloto4['volta'])
 
 def qualify():
     client.loop_start()

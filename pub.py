@@ -12,6 +12,7 @@ client = mqtt.Client("Pub")
 client.connect(mqttBroker, port)
 settings=''
 run = True
+r = True
 #Configuração da corrida
 
 tags = []
@@ -19,11 +20,11 @@ raceTags = []
 tagBuffer = []
 r = True
 
-def addBuffer(carro, tempo, volta):
+def add_buffer(carro, tempo, volta):
     tagBuffer.append({'tag':carro, 'time': tempo, 'sent':'false', 'volta':volta})
     raceTags.append(carro)
 
-def readerThread(tempo):
+def reader_thread_qualify(tempo):
     print('entrei na thread')
     c=0
     voltaCarro1 = -1
@@ -34,19 +35,49 @@ def readerThread(tempo):
         if(len(tags)>0):
             if(tags[0] not in raceTags):
                 voltaCarro1+=1
-                thread.start_new_thread(addBuffer, ('carro1', datetime.fromtimestamp(time.time()), str(voltaCarro1)))
+                thread.start_new_thread(add_buffer, ('carro1', datetime.fromtimestamp(time.time()), str(voltaCarro1)))
         if(len(tags)>1):
             if(tags[1] not in raceTags):
                 voltaCarro2+=1
-                thread.start_new_thread(addBuffer, ('carro2', datetime.fromtimestamp(time.time()), str(voltaCarro2)))
+                thread.start_new_thread(add_buffer, ('carro2', datetime.fromtimestamp(time.time()), str(voltaCarro2)))
         if(len(tags)>2):
             if(tags[2] not in raceTags):
                 voltaCarro3+=1
-                thread.start_new_thread(addBuffer, ('carro3', datetime.fromtimestamp(time.time()), str(voltaCarro3)))
+                thread.start_new_thread(add_buffer, ('carro3', datetime.fromtimestamp(time.time()), str(voltaCarro3)))
         if(len(tags)>3):
             if(tags[3] not in raceTags):
                 voltaCarro4+=1
-                thread.start_new_thread(addBuffer, ('carro4', datetime.fromtimestamp(time.time()), str(voltaCarro4)))
+                thread.start_new_thread(add_buffer, ('carro4', datetime.fromtimestamp(time.time()), str(voltaCarro4)))
+        time.sleep(0.1)
+        c+=1
+    print('Thread encerrada')
+    return
+
+def reader_thread_race():
+    global r
+    print('entrei na thread')
+    c=0
+    voltaCarro1 = -1
+    voltaCarro2 = -1
+    voltaCarro3 = -1
+    voltaCarro4 = -1
+    while r:
+        if(len(tags)>0):
+            if(tags[0] not in raceTags):
+                voltaCarro1+=1
+                thread.start_new_thread(add_buffer, ('carro1', datetime.fromtimestamp(time.time()), str(voltaCarro1)))
+        if(len(tags)>1):
+            if(tags[1] not in raceTags):
+                voltaCarro2+=1
+                thread.start_new_thread(add_buffer, ('carro2', datetime.fromtimestamp(time.time()), str(voltaCarro2)))
+        if(len(tags)>2):
+            if(tags[2] not in raceTags):
+                voltaCarro3+=1
+                thread.start_new_thread(add_buffer, ('carro3', datetime.fromtimestamp(time.time()), str(voltaCarro3)))
+        if(len(tags)>3):
+            if(tags[3] not in raceTags):
+                voltaCarro4+=1
+                thread.start_new_thread(add_buffer, ('carro4', datetime.fromtimestamp(time.time()), str(voltaCarro4)))
         time.sleep(0.1)
         c+=1
     print('Thread encerrada')
@@ -71,14 +102,12 @@ def get_settings():
     time.sleep(15)
     client.loop_stop()
         
-
-def readerQualify():
+def reader_qualify():
     global settings
     print('Começando qualify')    
     a = datetime.fromtimestamp(time.time())
-    thread.start_new_thread(readerThread, (int(settings[5]),))
-    while True: 
-        
+    thread.start_new_thread(reader_thread_qualify, (int(settings[5]),))
+    while True:         
         if(len(tagBuffer)>0 and tagBuffer[0]['sent'] == 'false'):
             info =  raceTags[0]+ '/'+ str(tagBuffer[0]['time'])+ '/'+ tagBuffer[0]['volta']
             client.publish('Corrida/Carro1', info)            
@@ -105,10 +134,49 @@ def readerQualify():
         time4 = timedelta(seconds = int(settings[5]))
         if(time3>time4):
             break
-
-    tags.clear()
     print('terminando a qualify')
+
+def reader_race():
+    global r
+    global settings
+    r = True
+    print('Começando corrida')    
+    thread.start_new_thread(reader_thread_race, ())
+    while True:         
+        if(len(tagBuffer)>0 and tagBuffer[0]['sent'] == 'false'):
+            info = 'race' + '/' + raceTags[0]+ '/'+ str(tagBuffer[0]['time'])+ '/'+ tagBuffer[0]['volta']
+            client.publish('Corrida/Carro1', info)            
+            tagBuffer[0]['sent'] = 'true'
+        elif(len(tagBuffer)>1 and tagBuffer[1]['sent'] == 'false'):
+            info = 'race' + '/' + raceTags[1]+ '/'+ str(tagBuffer[1]['time'])+ '/'+ tagBuffer[1]['volta']
+            client.publish('Corrida/Carro2', info)            
+            tagBuffer[1]['sent'] = 'true'
+        elif(len(tagBuffer)>2 and tagBuffer[2]['sent'] == 'false'):
+            info = 'race' + '/' + raceTags[2]+ '/'+ str(tagBuffer[2]['time'])+ '/'+ tagBuffer[2]['volta']
+            client.publish('Corrida/Carro3', info)            
+            tagBuffer[2]['sent'] = 'true'        
+        elif(len(tagBuffer)>3 and tagBuffer[3]['sent'] == 'false'):
+            info = 'race' + '/' + raceTags[3]+ '/'+ str(tagBuffer[3]['time'])+ '/'+ tagBuffer[3]['volta']
+            client.publish('Corrida/Carro4', info)            
+            tagBuffer[3]['sent'] = 'true'
+        elif (len(tagBuffer)>3):
+            if(int(tagBuffer[0]['volta'])>=int(settings[4]) and int(tagBuffer[1]['volta'])>=int(settings[4])and\
+                int(tagBuffer[2]['volta'])>=int(settings[4]) and int(tagBuffer[3]['volta'])>=int(settings[4])):
+                time.sleep(2)
+                tagBuffer.clear()
+                raceTags.clear()
+                tags.clear()
+                r = False
+                break
+        if (len(tagBuffer)>0):
+            time1 = datetime.fromtimestamp(time.time()) - tagBuffer[0]['time']
+            time2 = timedelta(seconds = 6)
+            if(time1 > time2):
+                del(tagBuffer[0])
+                del(raceTags[0])
+        
+    print('Terminando a corrida')
 
 get_settings()
 a = input('Pressione pra iniciar:')
-readerQualify()
+reader_race()
