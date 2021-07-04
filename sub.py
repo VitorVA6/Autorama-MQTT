@@ -4,11 +4,13 @@ from datetime import datetime
 from tkinter import *
 from tkinter import ttk
 import _thread as thread
+from itertools import groupby
+from functools import reduce
 
-piloto1 = {'tag':'', 'nome':'', 'record':300, 'time':0, 'position':'_', 'anterior':0, 'atual':0, 'volta':'_'}
-piloto2 = {'tag':'', 'nome':'', 'record':300, 'time':0, 'position':'_', 'anterior':0, 'atual':0, 'volta':'_'}
-piloto3 = {'tag':'', 'nome':'', 'record':300, 'time':0, 'position':'_', 'anterior':0, 'atual':0, 'volta':'_'}
-piloto4 = {'tag':'', 'nome':'', 'record':300, 'time':0, 'position':'_', 'anterior':0, 'atual':0, 'volta':'_'}
+piloto1 = {'tag':'', 'nome':'', 'record':300, 'time':0, 'position':'_', 'anterior':0, 'atual':0, 'volta':'0'}
+piloto2 = {'tag':'', 'nome':'', 'record':300, 'time':0, 'position':'_', 'anterior':0, 'atual':0, 'volta':'0'}
+piloto3 = {'tag':'', 'nome':'', 'record':300, 'time':0, 'position':'_', 'anterior':0, 'atual':0, 'volta':'0'}
+piloto4 = {'tag':'', 'nome':'', 'record':300, 'time':0, 'position':'_', 'anterior':0, 'atual':0, 'volta':'0'}
 run = True
 check_sub_car1 = True
 check_sub_car2 = True
@@ -18,6 +20,7 @@ config = []
 
 def on_message(client, userdata, message):
     global config
+    groups = []
     msg = str(message.payload.decode('utf-8')).split('/')
     qualifyCars = [piloto1, piloto2, piloto3, piloto4]
     if(msg[-1]=='set' and len(config)==0):
@@ -143,9 +146,24 @@ def on_message(client, userdata, message):
             piloto1['anterior']=datetime.strptime(msg[2], '%Y-%m-%d %H:%M:%S.%f')
         else:
             piloto1['atual'] = datetime.strptime(msg[2], '%Y-%m-%d %H:%M:%S.%f')
-            piloto1['time'] = float(str(piloto1['atual'] - piloto1['anterior'])[5:])
+            piloto1['time'] += float(str(piloto1['atual'] - piloto1['anterior'])[5:])
             piloto1['anterior'] = piloto1['atual']
             piloto1['volta']=msg[3]
+            qualifyCars.sort(key = lambda x:x['volta'], reverse=True)
+            for (key, group) in groupby(qualifyCars, key=lambda x:x['volta']):
+                aux = list(group)
+                aux.sort(key= lambda x:x['time'])
+                groups.append(aux)
+            qualifyCars = reduce(lambda x,y: x+y, groups)
+            groups.clear()
+            qualifyCars[0]['position']='1'
+            qualifyCars[1]['position']='2'
+            qualifyCars[2]['position']='3'
+            qualifyCars[3]['position']='4'
+            label_pos2_car1.configure(text=piloto1['position'])
+            label_pos2_car2.configure(text=piloto2['position'])
+            label_pos2_car3.configure(text=piloto3['position'])
+            label_pos2_car4.configure(text=piloto4['position'])
             label_time2_car1.configure(text=piloto1['time'])
             label_volta2_car1.configure(text=piloto1['volta'])
             print(piloto1['tag'], piloto1['position'], piloto1['time'], piloto1['volta'])
@@ -157,9 +175,24 @@ def on_message(client, userdata, message):
             piloto2['anterior']=datetime.strptime(msg[2], '%Y-%m-%d %H:%M:%S.%f')
         else:
             piloto2['atual'] = datetime.strptime(msg[2], '%Y-%m-%d %H:%M:%S.%f')
-            piloto2['time'] = float(str(piloto2['atual'] - piloto2['anterior'])[5:])
+            piloto2['time'] += float(str(piloto2['atual'] - piloto2['anterior'])[5:])
             piloto2['anterior'] = piloto2['atual']
             piloto2['volta']=msg[3]
+            qualifyCars.sort(key = lambda x:x['volta'], reverse=True)
+            for (key, group) in groupby(qualifyCars, key=lambda x:x['volta']):
+                aux = list(group)
+                aux.sort(key= lambda x:x['time'])
+                groups.append(aux)
+            qualifyCars = reduce(lambda x,y: x+y, groups)
+            groups.clear()
+            qualifyCars[0]['position']='1'
+            qualifyCars[1]['position']='2'
+            qualifyCars[2]['position']='3'
+            qualifyCars[3]['position']='4'
+            label_pos2_car1.configure(text=piloto1['position'])
+            label_pos2_car2.configure(text=piloto2['position'])
+            label_pos2_car3.configure(text=piloto3['position'])
+            label_pos2_car4.configure(text=piloto4['position'])
             label_time2_car2.configure(text=piloto2['time'])            
             label_volta2_car2.configure(text=piloto2['volta'])
             print(piloto2['tag'], piloto2['position'], piloto2['time'], piloto2['volta'])
@@ -171,9 +204,24 @@ def on_message(client, userdata, message):
             piloto3['anterior']=datetime.strptime(msg[2], '%Y-%m-%d %H:%M:%S.%f')
         else:
             piloto3['atual'] = datetime.strptime(msg[2], '%Y-%m-%d %H:%M:%S.%f')
-            piloto3['time'] = float(str(piloto3['atual'] - piloto3['anterior'])[5:])
+            piloto3['time'] += float(str(piloto3['atual'] - piloto3['anterior'])[5:])
             piloto3['anterior'] = piloto3['atual']
             piloto3['volta']=msg[3]         
+            qualifyCars.sort(key = lambda x:x['volta'], reverse=True)
+            for (key, group) in groupby(qualifyCars, key=lambda x:x['volta']):
+                aux = list(group)
+                aux.sort(key= lambda x:x['time'])
+                groups.append(aux)
+            qualifyCars = reduce(lambda x,y: x+y, groups)
+            groups.clear()
+            qualifyCars[0]['position']='1'
+            qualifyCars[1]['position']='2'
+            qualifyCars[2]['position']='3'
+            qualifyCars[3]['position']='4'
+            label_pos2_car1.configure(text=piloto1['position'])
+            label_pos2_car2.configure(text=piloto2['position'])
+            label_pos2_car3.configure(text=piloto3['position'])
+            label_pos2_car4.configure(text=piloto4['position'])
             label_time2_car3.configure(text=piloto3['time'])
             label_volta2_car3.configure(text=piloto3['volta'])
             print(piloto3['tag'], piloto3['position'], piloto3['time'], piloto3['volta'])
@@ -185,9 +233,24 @@ def on_message(client, userdata, message):
             piloto4['anterior']=datetime.strptime(msg[2], '%Y-%m-%d %H:%M:%S.%f')
         else:
             piloto4['atual'] = datetime.strptime(msg[2], '%Y-%m-%d %H:%M:%S.%f')
-            piloto4['time'] = float(str(piloto4['atual'] - piloto4['anterior'])[5:])
+            piloto4['time'] += float(str(piloto4['atual'] - piloto4['anterior'])[5:])
             piloto4['anterior'] = piloto4['atual']
             piloto4['volta']=msg[3]
+            qualifyCars.sort(key = lambda x:x['volta'], reverse=True)
+            for (key, group) in groupby(qualifyCars, key=lambda x:x['volta']):
+                aux = list(group)
+                aux.sort(key= lambda x:x['time'])
+                groups.append(aux)
+            qualifyCars = reduce(lambda x,y: x+y, groups)
+            groups.clear()
+            qualifyCars[0]['position']='1'
+            qualifyCars[1]['position']='2'
+            qualifyCars[2]['position']='3'
+            qualifyCars[3]['position']='4'
+            label_pos2_car1.configure(text=piloto1['position'])
+            label_pos2_car2.configure(text=piloto2['position'])
+            label_pos2_car3.configure(text=piloto3['position'])
+            label_pos2_car4.configure(text=piloto4['position'])
             label_time2_car4.configure(text=piloto4['time'])            
             label_volta2_car4.configure(text=piloto4['volta'])
             print(piloto4['tag'], piloto4['position'], piloto4['time'], piloto4['volta'])
