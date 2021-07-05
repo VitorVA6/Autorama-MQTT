@@ -304,7 +304,7 @@ def quali():
     thread.start_new_thread(qualify, ())
     
 s = Tk()
-s.title('Torcedor')
+s.title('Calculador')
 s.geometry('680x570')
 
 mqttBroker = 'broker.emqx.io'
