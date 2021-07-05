@@ -35,19 +35,19 @@ def reader_thread_qualify(tempo):
         if(len(tags)>0):
             if(tags[0] not in raceTags):
                 voltaCarro1+=1
-                thread.start_new_thread(add_buffer, ('carro1', datetime.fromtimestamp(time.time()), str(voltaCarro1)))
+                thread.start_new_thread(add_buffer, (tags[0], datetime.fromtimestamp(time.time()), str(voltaCarro1)))
         if(len(tags)>1):
             if(tags[1] not in raceTags):
                 voltaCarro2+=1
-                thread.start_new_thread(add_buffer, ('carro2', datetime.fromtimestamp(time.time()), str(voltaCarro2)))
+                thread.start_new_thread(add_buffer, (tags[1], datetime.fromtimestamp(time.time()), str(voltaCarro2)))
         if(len(tags)>2):
             if(tags[2] not in raceTags):
                 voltaCarro3+=1
-                thread.start_new_thread(add_buffer, ('carro3', datetime.fromtimestamp(time.time()), str(voltaCarro3)))
+                thread.start_new_thread(add_buffer, (tags[2], datetime.fromtimestamp(time.time()), str(voltaCarro3)))
         if(len(tags)>3):
             if(tags[3] not in raceTags):
                 voltaCarro4+=1
-                thread.start_new_thread(add_buffer, ('carro4', datetime.fromtimestamp(time.time()), str(voltaCarro4)))
+                thread.start_new_thread(add_buffer, (tags[3], datetime.fromtimestamp(time.time()), str(voltaCarro4)))
         time.sleep(0.1)
         c+=1
     print('Thread encerrada')
@@ -56,28 +56,29 @@ def reader_thread_qualify(tempo):
 def reader_thread_race():
     global r
     print('entrei na thread')
+    print(tagBuffer)
     c=0
-    voltaCarro1 = -1
-    voltaCarro2 = -1
-    voltaCarro3 = -1
-    voltaCarro4 = -1
+    voltaCarror1 = -1
+    voltaCarror2 = -1
+    voltaCarror3 = -1
+    voltaCarror4 = -1
     while r:
         if(len(tags)>0):
             if(tags[0] not in raceTags):
-                voltaCarro1+=1
-                thread.start_new_thread(add_buffer, ('carro1', datetime.fromtimestamp(time.time()), str(voltaCarro1)))
+                voltaCarror1+=1
+                thread.start_new_thread(add_buffer, (tags[0], datetime.fromtimestamp(time.time()), str(voltaCarror1)))
         if(len(tags)>1):
             if(tags[1] not in raceTags):
-                voltaCarro2+=1
-                thread.start_new_thread(add_buffer, ('carro2', datetime.fromtimestamp(time.time()), str(voltaCarro2)))
+                voltaCarror2+=1
+                thread.start_new_thread(add_buffer, (tags[1], datetime.fromtimestamp(time.time()), str(voltaCarror2)))
         if(len(tags)>2):
             if(tags[2] not in raceTags):
-                voltaCarro3+=1
-                thread.start_new_thread(add_buffer, ('carro3', datetime.fromtimestamp(time.time()), str(voltaCarro3)))
+                voltaCarror3+=1
+                thread.start_new_thread(add_buffer, (tags[2], datetime.fromtimestamp(time.time()), str(voltaCarror3)))
         if(len(tags)>3):
             if(tags[3] not in raceTags):
-                voltaCarro4+=1
-                thread.start_new_thread(add_buffer, ('carro4', datetime.fromtimestamp(time.time()), str(voltaCarro4)))
+                voltaCarror4+=1
+                thread.start_new_thread(add_buffer, (tags[3], datetime.fromtimestamp(time.time()), str(voltaCarror4)))
         time.sleep(0.1)
         c+=1
     print('Thread encerrada')
@@ -135,8 +136,14 @@ def reader_qualify():
         if(time3>time4):
             break
     print('terminando a qualify')
+    tagBuffer.clear()
+    raceTags.clear()
 
 def reader_race():
+    global raceTags
+    global tagBuffer
+    raceTags.clear()
+    tagBuffer.clear()
     global r
     global settings
     r = True
@@ -176,7 +183,10 @@ def reader_race():
                 del(raceTags[0])
         
     print('Terminando a corrida')
+    print(tagBuffer)
 
 get_settings()
-a = input('Pressione pra iniciar:')
+a = input('Pressione pra iniciar Qualify:')
+reader_qualify()
+a = input('Pressione pra iniciar Corrida:')
 reader_race()

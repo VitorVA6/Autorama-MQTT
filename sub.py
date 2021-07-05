@@ -258,11 +258,28 @@ def on_message(client, userdata, message):
                 piloto4['volta'])
 
 def qualify():
-    client.loop_start()
     client.subscribe('Corrida/#')
+    client.loop_start()
     client.on_message = on_message
     time.sleep(int(config[1])+10)
-    client.loop_stop()        
+    client.loop_stop()     
+    race()   
+
+def race():
+    global piloto1
+    global piloto2
+    global piloto3
+    global piloto4
+    piloto1['time'] = 0
+    piloto2['time'] = 0
+    piloto3['time'] = 0
+    piloto4['time'] = 0
+    label_qualify.configure(text='Corrida')
+    client.subscribe('Corrida/#')
+    client.loop_start()
+    client.on_message = on_message
+    time.sleep(500)
+    client.loop_stop()
 
 def get_settings():
     client.loop_start()
