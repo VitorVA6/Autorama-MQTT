@@ -45,7 +45,7 @@ def on_message(client, userdata, message):
 def start_broker():
     client.loop_start()
     client.on_message = on_message
-    time.sleep(45)
+    time.sleep(500)
     client.loop_stop()    
 
 def unsub_car1():
