@@ -3,6 +3,7 @@ from tkinter import ttk
 from api import *
 import _thread as thread
 import paho.mqtt.client as mqtt
+import time
 
 #As funções abaixo são responsáveis por transitar entre as telas, sendo acionadas pelos
 #botões "Voltar" e "Avançar"
@@ -71,16 +72,34 @@ def races():
     else: 
         print('Preencha os campos corretamente!')
 
+
+def on_message(client, userdata, message):
+    global settings
+    tag = str(message.payload.decode('utf-8'))
+    ec1.delete(0, 30)
+    ec1.insert(0, tag)
+
+def get_tag():
+    client.subscribe('Tag')
+    client.loop_start()
+    client.on_message = on_message
+    time.sleep(500)
+    client.loop_stop()
+
 #Instancias da classe tk que é a biblioteca usada para desenvolver a interface, 
 #da classe cliente e da classe api
 s = Tk()
 s.title('Autorama')
 s.geometry('680x570')
 a = api()
+mqttBroker = 'broker.emqx.io'
+port = 1883
+client = mqtt.Client("ADM")
+client.connect(mqttBroker, port)
+thread.start_new_thread(get_tag, ())
 
 #As linhas de código abaixo em sua maioria dizem respeito a instâncias de componentes de tela,
 #como botões, labels, inputs e etc, despensa explicações
-
 
 #Elementos contidos na tela de carros
 
@@ -294,11 +313,7 @@ def start():
         elif(config['piloto4'] in b['nome']):
             config['epc4'] = b['carro']
     file.close()
-    linhas.clear()
-    mqttBroker = 'broker.emqx.io'
-    port = 1883
-    client = mqtt.Client("ADM")
-    client.connect(mqttBroker, port)
+    linhas.clear()    
     client.publish('Settings', config['epc1']+'/'+config['epc2']+'/'+config['epc3']+'/'+config['epc4']+'/'+\
         config['voltas']+'/'+config['duracao']+'/'+config['piloto1']+'/'+config['piloto2']+'/'+config['piloto3']+\
         '/'+config['piloto4']+'/'+'set')

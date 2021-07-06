@@ -127,7 +127,7 @@ def reader_qualify():
             tagBuffer[3]['sent'] = 'true'
         if (len(tagBuffer)>0):
             time1 = datetime.fromtimestamp(time.time()) - tagBuffer[0]['time']
-            time2 = timedelta(seconds = 6)
+            time2 = timedelta(seconds = 70)
             if(time1 > time2):
                 del(tagBuffer[0])
                 del(raceTags[0])
@@ -185,6 +185,13 @@ def reader_race():
     print('Terminando a corrida')
     print(tagBuffer)
 
+while True:
+    confirm = input("Deseja ler uma tag?(y/n):")
+    if(confirm == 'n'):
+        break
+    else:
+        client.publish('Tag', 'Tome aqui sua tag')
+a = input('Pressione para receber settings')
 get_settings()
 a = input('Pressione pra iniciar Qualify:')
 reader_qualify()

@@ -178,6 +178,19 @@ def reader_race():
     print('Terminando a corrida')
     print(tagBuffer)
 
+while True:
+    confirm = input("Deseja ler uma tag?(y/n):")
+    if(confirm == 'n'):
+        break
+    else:
+        reader = mercury.Reader("tmr:///dev/ttyUSB0", baudrate=115200)
+        reader.set_region("NA2")
+        reader.set_read_plan([1], "GEN2", read_power=1500)
+        epcs = map(lambda t: t.epc.decode(), reader.read())
+        tag = list(epcs)
+        if(len(tag)>0):
+            client.publish('Tag', tag[0])
+a = input('Pressione para receber settings')
 get_settings()
 a = input('Pressione pra iniciar Qualify:')
 reader_qualify()
