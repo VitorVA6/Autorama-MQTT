@@ -127,7 +127,7 @@ def reader_qualify():
             tagBuffer[3]['sent'] = 'true'
         if (len(tagBuffer)>0):
             time1 = datetime.fromtimestamp(time.time()) - tagBuffer[0]['time']
-            time2 = timedelta(seconds = 70)
+            time2 = timedelta(seconds = 6)
             if(time1 > time2):
                 del(tagBuffer[0])
                 del(raceTags[0])

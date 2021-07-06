@@ -319,7 +319,7 @@ def start():
         '/'+config['piloto4']+'/'+'set')
     
 
-b61 = Button(frame63, text = 'Começar', width = 12, font = 'verdana 10 bold', command = start)
+b61 = Button(frame63, text = 'Enviar', width = 12, font = 'verdana 10 bold', command = start)
 b61.grid(row = 11, column = 2)
 
 

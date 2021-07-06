@@ -11,7 +11,6 @@ piloto1 = {'tag':'', 'nome':'', 'record':timedelta(minutes=10), 'time':timedelta
 piloto2 = {'tag':'', 'nome':'', 'record':timedelta(minutes=10), 'time':timedelta(), 'position':'_', 'anterior':0, 'atual':0, 'volta':'0'}
 piloto3 = {'tag':'', 'nome':'', 'record':timedelta(minutes=10), 'time':timedelta(), 'position':'_', 'anterior':0, 'atual':0, 'volta':'0'}
 piloto4 = {'tag':'', 'nome':'', 'record':timedelta(minutes=10), 'time':timedelta(), 'position':'_', 'anterior':0, 'atual':0, 'volta':'0'}
-run = True
 check_sub_car1 = True
 check_sub_car2 = True
 check_sub_car3 = True
@@ -275,6 +274,8 @@ def race():
     piloto3['time'] = timedelta()
     piloto4['time'] = timedelta()
     label_qualify.configure(text='Corrida')
+    label_perc.forget()
+    label_perc_2.forget()
     client.subscribe('Corrida/#')
     client.loop_start()
     client.on_message = on_message
@@ -295,14 +296,26 @@ def get_set():
 def quali():
     start_screen.forget()
     label_qualify.pack(pady=20)
-    screen_car1.pack(pady=30)
-    screen_car2.pack(pady=30)
-    screen_car3.pack(pady=30)
-    screen_car4.pack(pady=30)
+    screen_car1.pack(pady=15)
+    screen_car2.pack(pady=15)
+    screen_car3.pack(pady=15)
+    screen_car4.pack(pady=15)
     screen_buttons.pack(pady=20, side=BOTTOM)
     screen.pack()
     thread.start_new_thread(qualify, ())
+    thread.start_new_thread(counter, ())
     
+def counter():
+    global config
+    cont = int(config[1])+5
+    while cont >0:
+        cont-=1
+        label_perc_2.configure(text=cont)
+        client.publish('Counter', 'tempo'+'-'+str(cont))
+        time.sleep(1)
+    label_perc_2.configure(text='FIM')
+    client.publish('Counter', 'tempo'+'-'+'FIM')
+
 s = Tk()
 s.title('Calculador')
 s.geometry('680x570')
@@ -423,6 +436,11 @@ label_volta_car4 = Label(screen_car4, text='Volta:', font = 'verdana 11 bold')
 label_volta_car4.grid(row = 0, column = 4, padx = 25)
 label_volta2_car4 = Label(screen_car4, text=piloto4['volta'], font = 'verdana 11')
 label_volta2_car4.grid(row = 1, column = 4, padx = 25)
+
+label_perc = Label(screen_buttons, text="TEMPO:", font = 'verdana 18')
+label_perc.pack()
+label_perc_2 = Label(screen_buttons, text='aaa', font = 'verdana 18')
+label_perc_2.pack()
 
 button = Button(start_screen, text='Start', width = 12, font = 'verdana 10 bold', command=quali)
 button.pack()

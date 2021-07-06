@@ -8,6 +8,7 @@ mqttBroker = 'broker.emqx.io'
 port = 1883
 client = mqtt.Client("Cheer")
 client.connect(mqttBroker, port)
+client.subscribe('Counter')
 
 sub_car1 = False
 sub_car2 = False
@@ -16,7 +17,13 @@ sub_car4 = False
 
 def on_message(client, userdata, message):
     dado = str(message.payload.decode('utf-8')).split('-')
-    print(dado)    
+    print(dado) 
+    if(dado[0] == 'tempo'):
+        if(dado[1]=='FIM'):
+            t_tempo.configure(text='RACE')
+            client.unsubscribe('Counter')
+        else:
+            t_tempo.configure(text='QUALI: '+dado[1])
     if(dado[0]=='carro1'):
         title_name_car1.configure(text=dado[1])
         title_car_car1.configure(text=dado[2])
@@ -221,6 +228,8 @@ button_unsub_car3=Button(buttons_frame,text='PILOTO3',width=20,font='verdana 10 
 button_unsub_car3.grid(row=0 ,column=2, padx=15)
 button_unsub_car4=Button(buttons_frame,text='PILOTO4',width=20,font='verdana 10 bold',command=unsub_car4,bg='LightBlue4')
 button_unsub_car4.grid(row=0 ,column=3, padx=15)
+t_tempo = Label(buttons_frame, text='CORRIDA: ',font='verdana 18 bold', padx = 25)
+t_tempo.grid(row=0 ,column=4)
 
 pilot1_frame.pack(pady = 10)
 pilot2_frame.pack(pady = 10)
