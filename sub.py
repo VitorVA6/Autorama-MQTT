@@ -7,6 +7,7 @@ import _thread as thread
 from itertools import groupby
 from functools import reduce
 
+#Dicionários que armazenas os dados dos pilotos
 piloto1 = {'tag':'', 'nome':'', 'record':timedelta(minutes=10), 'time':timedelta(), 'position':'_', 'anterior':0, 'atual':0, 'volta':'0'}
 piloto2 = {'tag':'', 'nome':'', 'record':timedelta(minutes=10), 'time':timedelta(), 'position':'_', 'anterior':0, 'atual':0, 'volta':'0'}
 piloto3 = {'tag':'', 'nome':'', 'record':timedelta(minutes=10), 'time':timedelta(), 'position':'_', 'anterior':0, 'atual':0, 'volta':'0'}
@@ -17,6 +18,9 @@ check_sub_car3 = True
 check_sub_car4 = True
 config = []
 
+#Método que recebe as mensagens, decodifica e atualiza os dados do piloto com os dados recebidos
+#Após receber os dados ele calcula posição de cada piloto, calcula o tempo de volta e o melhor tempo de cada um
+#Além de exibir os dados numa interface simples
 def on_message(client, userdata, message):
     global config
     groups = []
@@ -256,6 +260,7 @@ def on_message(client, userdata, message):
             client.publish('Qualify/Pil4', 'carro4'+'-'+piloto4['nome']+'-'+piloto4['position']+'-'+str(piloto4['time'])[3:11]+'-'+\
                 '_'+'-'+piloto4['volta'])
 
+#Inscrição no tópico corrida e início do loop de recebimentos de mensagens
 def qualify():
     client.subscribe('Corrida/#')
     client.loop_start()
@@ -264,6 +269,7 @@ def qualify():
     client.loop_stop()     
     race()   
 
+#Método que vai resetar os dados do piloto e da tela para o início da Corrida
 def race():
     global piloto1
     global piloto2
@@ -282,6 +288,7 @@ def race():
     time.sleep(500)
     client.loop_stop()
 
+#Método que recebe as configuraçõos do ADM
 def get_settings():
     client.loop_start()
     client.subscribe('Settings')
@@ -290,9 +297,11 @@ def get_settings():
     client.loop_stop()
     label_settings.configure(text='Tudo pronto!')
 
+#Inicia uma thread para a função de receber configuraçãoes
 def get_set():
     thread.start_new_thread(get_settings, ())
 
+#Método que inicia uma thread para a função de recebimento de dados da qualificatória
 def quali():
     start_screen.forget()
     label_qualify.pack(pady=20)
@@ -304,7 +313,8 @@ def quali():
     screen.pack()
     thread.start_new_thread(qualify, ())
     thread.start_new_thread(counter, ())
-    
+
+#Método que cria um constador na tela
 def counter():
     global config
     cont = int(config[1])+5
@@ -320,11 +330,13 @@ s = Tk()
 s.title('Calculador')
 s.geometry('680x570')
 
+#instância e configuração do broker 
 mqttBroker = 'broker.emqx.io'
 port = 1883
 client = mqtt.Client("Sub")
 client.connect(mqttBroker, port)
 
+#Abaixo são instâncias de widgets de tela como labels, buttons e etc
 screen = Frame(s)
 start_screen = Frame(s)
 screen_car1 = Frame(screen)

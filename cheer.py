@@ -4,6 +4,7 @@ from tkinter import *
 from tkinter import ttk
 import _thread as thread
 
+#Instância e configuração do broker
 mqttBroker = 'broker.emqx.io'
 port = 1883
 client = mqtt.Client("Cheer")
@@ -15,6 +16,7 @@ sub_car2 = False
 sub_car3 = False
 sub_car4 = False
 
+#Método que recebe as mensagens do publicador, decodifca e exibe na tela
 def on_message(client, userdata, message):
     dado = str(message.payload.decode('utf-8')).split('-')
     print(dado) 
@@ -49,12 +51,14 @@ def on_message(client, userdata, message):
         title_record_car4.configure(text=dado[4])
         title_volta_car4.configure(text=dado[5])
 
+#Início do loop de subscrição nos tópicos da qualificatória/corrida
 def start_broker():
     client.loop_start()
     client.on_message = on_message
     time.sleep(500)
     client.loop_stop()    
 
+#Método que inscreve/desinscreve o torcedor no tópico carro1
 def unsub_car1():
     global sub_car1
     if (sub_car1==False):
@@ -66,6 +70,7 @@ def unsub_car1():
         title_status_car1.configure(text='OFF')
         sub_car1=False
 
+#Método que inscreve/desinscreve o torcedor no tópico carro1
 def unsub_car2():
     global sub_car2
     if (sub_car2==False):
@@ -77,6 +82,7 @@ def unsub_car2():
         title_status_car2.configure(text='OFF')
         sub_car2=False
 
+#Método que inscreve/desinscreve o torcedor no tópico carro1
 def unsub_car3():
     global sub_car3
     if (sub_car3==False):
@@ -88,6 +94,7 @@ def unsub_car3():
         title_status_car3.configure(text='OFF')
         sub_car3=False
 
+#Método que inscreve/desinscreve o torcedor no tópico carro1
 def unsub_car4():
     global sub_car4
     if (sub_car4==False):
@@ -97,7 +104,7 @@ def unsub_car4():
     else:
         client.unsubscribe('Qualify/Pil4')
         title_status_car4.configure(text='OFF')
-        sub_car4=True
+        sub_car4=False
 
 thread.start_new_thread(start_broker, ())
 
@@ -105,6 +112,7 @@ s = Tk()
 s.title('Torcedor')
 s.geometry('1240x730')
 
+#Abaixo são as instâncias dos widgets da tela
 pilot1_frame = LabelFrame(s, borderwidth=3,relief=SOLID)
 pilot2_frame = LabelFrame(s, borderwidth=3,relief=SOLID)
 pilot3_frame = LabelFrame(s, borderwidth=3,relief=SOLID)

@@ -26,10 +26,12 @@ raceTags = []
 tagBuffer = []
 r = True
 
+#Método que adiciona uma tag ao buffer
 def add_buffer(carro, tempo, volta):
     tagBuffer.append({'tag':carro, 'time': tempo, 'sent':'false', 'volta':volta})
     raceTags.append(carro)
 
+#Filtragem de tags para preenchimento do buffer
 def tag_filter(tag, tempo):
     global voltaCarro1
     global voltaCarro2
@@ -52,6 +54,7 @@ def tag_filter(tag, tempo):
         tagBuffer.append({'tag':tags[3], 'time': tempo, 'sent':'false', 'volta':str(voltaCarro4)})
         raceTags.append(tags[3])
 
+#Instanciamento do leitor e início do looping de ativação do leitor
 def reader_thread_qualify(tempo):
     reader = mercury.Reader("tmr:///dev/ttyUSB0", baudrate=115200)
     reader.set_region("NA2")
@@ -60,15 +63,16 @@ def reader_thread_qualify(tempo):
     time.sleep(tempo)
     reader.stop_reading()
 
+#Instanciamento do leitor e início do looping de ativação do leitor
 def reader_thread_race():
     reader = mercury.Reader("tmr:///dev/ttyUSB0", baudrate=115200)
     reader.set_region("NA2")
     reader.set_read_plan([1], "GEN2", read_power=1500)
     reader.start_reading(lambda tag: tag_filter(tag.epc.decode(), datetime.fromtimestamp(tag.timestamp)))
-    time.sleep(21)
+    time.sleep(240)
     reader.stop_reading()
 
-
+#Método que irá receber as mesnagens do publicador e decodificá-las
 def on_message(client, userdata, message):
     global settings
     settings = str(message.payload.decode('utf-8')).split('/')
@@ -78,7 +82,7 @@ def on_message(client, userdata, message):
     tags.append(settings[3])
     print(settings)
     
-
+#Método que se inscreve no tópico "Settings" para receber as configurações da corrida e qualificatória
 def get_settings():
     global run
     global settings    
@@ -88,6 +92,7 @@ def get_settings():
     time.sleep(15)
     client.loop_stop()
         
+#Método responsável por públicar os dados da qualificatória, quando o produtor/consumidor for atualizado
 def reader_qualify():
     global settings
     print('Começando qualify')    
@@ -112,7 +117,7 @@ def reader_qualify():
             tagBuffer[3]['sent'] = 'true'
         if (len(tagBuffer)>0):
             time1 = datetime.fromtimestamp(time.time()) - tagBuffer[0]['time']
-            time2 = timedelta(seconds = 6)
+            time2 = timedelta(seconds = 20)
             if(time1 > time2):
                 del(tagBuffer[0])
                 del(raceTags[0])
@@ -124,6 +129,7 @@ def reader_qualify():
     tagBuffer.clear()
     raceTags.clear()
 
+#Método responsável por públicar os dados da corrida, quando o produtor/consumidor for atualizado
 def reader_race():
     global voltaCarro1
     global voltaCarro2
@@ -170,7 +176,7 @@ def reader_race():
                 break
         if (len(tagBuffer)>0):
             time1 = datetime.fromtimestamp(time.time()) - tagBuffer[0]['time']
-            time2 = timedelta(seconds = 6)
+            time2 = timedelta(seconds = 20)
             if(time1 > time2):
                 del(tagBuffer[0])
                 del(raceTags[0])
@@ -178,6 +184,7 @@ def reader_race():
     print('Terminando a corrida')
     print(tagBuffer)
 
+#Looping responsável por controlar a leitura de tags para cadastro dos carros
 while True:
     confirm = input("Deseja ler uma tag?(y/n):")
     if(confirm == 'n'):
