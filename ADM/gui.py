@@ -26,6 +26,8 @@ def cars():
             print('Carro já existe')
         else:
             a.signupCars(ec1.get(), cc1.get(), cc2.get())
+            carros = a.getCars()
+            cp2.configure(values=carros)
     else: 
         print('Preencha os campos corretamente!')
 
@@ -38,18 +40,25 @@ def teams():
             print('Equipe já existe')
         else:
             a.signupTeams(ee1.get(), ce1.get())
+            times = a.getTeams()
+            cp1.configure(values=times)
     else: 
         print('Preencha os campos corretamente!')
 
 #Função responsável por cadastrar um piloto no arquivo pilots.json
 #caso os dados tenham sido preenchidos corretamente
 def pilots():
-    if(ep1.get()!='' and ep2.get()!='' and ep3.get()!=''):
+    if(ep1.get()!='' and cp1.get()!='' and cp2.get()!=''):
         ret = a.checkPilots(ep1.get())
         if(ret):
             print('Piloto já existe')
-        else:
-            a.signupPilots(ep1.get(), ep2.get(), ep3.get())
+        else:            
+            a.signupPilots(ep1.get(), cp1.get(), cp2.get())
+            pilotos = a.getPilots()
+            c61.configure(values=pilotos)
+            c62.configure(values=pilotos)
+            c63.configure(values=pilotos)
+            c64.configure(values=pilotos)
     else: 
         print('Preencha os campos corretamente!')
 
@@ -62,6 +71,8 @@ def circuits():
             print('Pista já existe')
         else:
             a.signupCircuits(e51.get(), c51.get(), e53.get())
+            circuitos = a.getCircuits()
+            c60.configure(values=circuitos)
     else: 
         print('Preencha os campos corretamente!')
 
@@ -190,14 +201,14 @@ ep1.grid(row = 1, column = 0, pady = 8, padx=20)
 lp3 = Label(framep2, text = 'Equipe', font = 'verdana 11 bold')
 lp3.grid(row = 0, column = 1)
 
-ep2 = Entry(framep2, font = 'verdana 10', width = 16)
-ep2.grid(row = 1, column = 1, pady = 1, padx=20)
+cp1 = ttk.Combobox(framep2, values = a.getTeams(), width = 20)
+cp1.grid(row = 1, pady = 8, column = 1, padx = 10)
 
 lp4 = Label(framep2, text = 'Carro', font = 'verdana 11 bold')
 lp4.grid(row = 0, column = 2)
 
-ep3 = Entry(framep2, width = 26, font = 'verdana 10')
-ep3.grid(row = 1, column = 2, pady = 8, padx=20)
+cp2 = ttk.Combobox(framep2, values = a.getCars(), width = 20)
+cp2.grid(row = 1, pady = 8, column = 2, padx = 10)
 
 bp1 = Button(framep3, text = 'Cadastrar', width = 12, font = 'verdana 10 bold', command = pilots)
 bp1.grid(row = 11, column = 1)
@@ -277,20 +288,20 @@ c60 = ttk.Combobox(frame62, values = circuitos, width = 16)
 c60.grid(row = 1, column = 2, pady = 10, padx = 20)
 
 l66 = Label(frame62, text = 'Pilotos', font = 'verdana 11 bold')
-l66.grid(row = 2, sticky = W)
+l66.grid(row = 2)
 
 pilotos = a.getPilots()
-c61 = ttk.Combobox(frame62, values = pilotos, width = 10)
-c61.grid(row = 3, sticky = W, pady = 10, column = 0)
+c61 = ttk.Combobox(frame62, values = pilotos, width = 14)
+c61.grid(row = 3, pady = 10, column = 0, padx = 14)
 
-c62 = ttk.Combobox(frame62, values = pilotos, width = 10)
-c62.grid(row = 3, sticky = W, pady = 10, column = 1)
+c62 = ttk.Combobox(frame62, values = pilotos, width = 14)
+c62.grid(row = 3, pady = 10, column = 1, padx = 14)
 
-c63 = ttk.Combobox(frame62, values = pilotos, width = 10)
-c63.grid(row = 3, sticky = W, pady = 10, column = 2)
+c63 = ttk.Combobox(frame62, values = pilotos, width = 14)
+c63.grid(row = 3, pady = 10, column = 2, padx = 14)
 
-c64 = ttk.Combobox(frame62, values = pilotos, width = 10)
-c64.grid(row = 3, sticky = W, pady = 10, column = 3)
+c64 = ttk.Combobox(frame62, values = pilotos, width = 14)
+c64.grid(row = 3, pady = 10, column = 3, padx = 14)
 
 b50 = Button(frame63, text = 'Voltar', width = 12, font = 'verdana 10 bold', command = circuitos_pilotos)
 b50.grid(row = 11, column = 0)

@@ -42,6 +42,15 @@ class api():
                 a = False
         return a
 
+    def getCars(self):
+        file = open('dataBase/cars.json', 'r')
+        linhas = file.readlines()
+        carsList = []
+        for linha in linhas:
+            b = json.loads(linha)
+            carsList.append(b['tag'])
+        return carsList
+
 #Função que recebe dados de um time e faz seu cadastro no arquivo teams.json
     def signupTeams(self, nome, nacionalidade): 
         file = open('dataBase/teams.json', 'r')
@@ -65,6 +74,15 @@ class api():
             else:
                 a = False
         return a
+
+    def getTeams(self):
+        file = open('dataBase/teams.json', 'r')
+        linhas = file.readlines()
+        teamsList = []
+        for linha in linhas:
+            b = json.loads(linha)
+            teamsList.append(b['nome'])
+        return teamsList
 
 #Função que recebe dados de um piloto e faz seu cadastro no arquivo pilots.json
     def signupPilots(self, nome, equipe, carro):
